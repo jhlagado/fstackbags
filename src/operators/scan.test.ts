@@ -3,7 +3,6 @@ import { fromIterator } from "./from-iterator";
 import { register } from "../utils/registry";
 import { pipe } from "./pipe";
 import { scan } from "./scan";
-import { printTuples } from "../utils/format-utils";
 
 test('accumulate the total', () => {
     const expected = [1, 3, 6, 10];
@@ -21,5 +20,4 @@ test('accumulate the total', () => {
         forEach(register(crossCheck)),
     );
     expect(crossCheck).toHaveBeenCalledTimes(expectedLength);
-    printTuples()
 })

@@ -1,7 +1,6 @@
 import { forEach } from "./for-each";
 import { register } from "../utils/registry";
 import { pipe } from "./pipe";
-import { printTuples } from "../utils/format-utils";
 import { fromOnce } from "./from-once";
 
 test('emit 1 numbers', () => {
@@ -17,5 +16,4 @@ test('emit 1 numbers', () => {
         forEach(register(printOp)),
     );
     expect(printOp).toHaveBeenCalledTimes(expectedLength);
-    printTuples();
 })

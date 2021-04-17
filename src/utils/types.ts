@@ -2,11 +2,7 @@ import { Mode } from "./constants";
 
 export type Elem = number | Tuple;
 export type Tuple = [Elem, Elem, Elem, Elem] & {
-    owner?: Owner,
-    mask?: number,
     proc?: CProc | CSProc,
-    name: string,
-    destroy?: boolean,
 };
 
 export type Proc = (mode: Mode, d?: any) => Tuple | void;

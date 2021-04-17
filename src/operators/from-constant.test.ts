@@ -1,9 +1,8 @@
-import { forEach } from "./for-each";
-import { fromConstant } from "./from-constant";
-import { register } from "../utils/registry";
-import { pipe } from "./pipe";
-import { take } from "./take";
-import { printTuples } from "../utils/format-utils";
+import { forEach } from './for-each';
+import { fromConstant } from './from-constant';
+import { register } from '../utils/registry';
+import { pipe } from './pipe';
+import { take } from './take';
 
 const times = 3;
 test('emit 3 numbers', () => {
@@ -14,11 +13,6 @@ test('emit 3 numbers', () => {
         expect(value).toBe(expected.shift());
     });
 
-    pipe(
-        fromConstant(1000),
-        take(times),
-        forEach(register(printOp)),
-    );
+    pipe(fromConstant(1000), take(times), forEach(register(printOp)));
     expect(printOp).toHaveBeenCalledTimes(expectedLength);
-    printTuples();
-})
+});

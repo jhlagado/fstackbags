@@ -2,7 +2,6 @@ import { forEach } from "./for-each";
 import { fromIterator } from "./from-iterator";
 import { register } from "../utils/registry";
 import { pipe } from "./pipe";
-import { printTuples } from "../utils/format-utils";
 
 test('count up to 40 in 10s and compare each number', () => {
     const expected = [10, 20, 30, 40];
@@ -20,5 +19,4 @@ test('count up to 40 in 10s and compare each number', () => {
     );
 
     expect(crossCheck).toHaveBeenCalledTimes(expectedLength);
-    printTuples()
 })
