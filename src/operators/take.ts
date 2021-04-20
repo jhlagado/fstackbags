@@ -1,7 +1,7 @@
 import { ARGS, Mode, SINK, SOURCE, TRUE, VARS } from '../utils/constants';
 import { Closure, CProc, Tuple } from '../utils/types';
 import { createClosure, sinkFactory, argsFactory, execClosure, closureFactorySink } from '../utils/closure-utils';
-import { tgetv, tset, tsetv, tupleNew } from '../utils/tuple-utils';
+import { tgetv, tset, tsetv } from '../utils/tuple-utils';
 
 const TAKEN = 1;
 const END = 2;
@@ -22,7 +22,7 @@ const sourceTBF: CProc = (state) => (mode, d) => {
     const max = state[ARGS] as number;
     let vars = state[VARS] as Tuple;
     if (!vars) {
-        vars = tupleNew(0, 0, 0, 0);
+        vars = [0, 0, 0, 0];
         tset(state, VARS, vars);
     }
     const sink = state[SINK] as Closure;

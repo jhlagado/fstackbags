@@ -1,11 +1,10 @@
 import { CProc, CSProc, Tuple, Elem, Closure } from './types';
 import { ARGS, SOURCE, Mode, VARS } from './constants';
-import { tupleNew } from './tuple-utils';
 
 export const isTuple = (elem?: Elem): elem is Tuple => Array.isArray(elem) && elem.length === 4;
 
 export const createClosure = (a: Elem, b: Elem, c: Elem, d: Elem, cproc: CProc | CSProc): Closure =>
-    [tupleNew(a, b, c, d), cproc] as Closure;
+    [[a, b, c, d], cproc] as Closure;
 
 export const execClosure = (closure: Closure, mode: Mode, d?: any) => {
     const tuple = closure[0];

@@ -2,7 +2,7 @@ import { ARGS, FALSE, Mode, SINK, TRUE, VARS } from '../utils/constants';
 import { Closure, Tuple } from '../utils/types';
 import { lookup } from '../utils/registry';
 import { argsFactory, execClosure, closureFactorySource } from '../utils/closure-utils';
-import { tgetv, tset, tsetv, tupleNew } from '../utils/tuple-utils';
+import { tgetv, tset, tsetv } from '../utils/tuple-utils';
 
 const INLOOP = 0;
 const GOT1 = 1;
@@ -31,7 +31,7 @@ const loop = (state: Tuple) => {
 const fromIteratorSinkCB = (state: Tuple) => (mode: Mode) => {
     let vars = state[VARS] as Tuple;
     if (!vars) {
-        vars = tupleNew(FALSE, FALSE, FALSE, FALSE);
+        vars = [FALSE, FALSE, FALSE, FALSE];
         tset(state, VARS, vars);
     }
     if (tgetv(vars, COMPLETED)) return;

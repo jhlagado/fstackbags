@@ -2,7 +2,7 @@ import { ARGS, Mode, SINK, VARS } from '../utils/constants';
 import { Closure, Tuple } from '../utils/types';
 import { lookup, register } from '../utils/registry';
 import { createClosure, argsFactory, execClosure } from '../utils/closure-utils';
-import { tupleNew, tset, tsetv, tgetv } from '../utils/tuple-utils';
+import { tset, tsetv, tgetv } from '../utils/tuple-utils';
 
 const I = 1;
 const ID = 2;

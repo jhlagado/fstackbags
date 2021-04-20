@@ -1,9 +1,5 @@
 import { Elem, Tuple } from './types';
 
-export const tupleNew = (a: Elem, b: Elem, c: Elem, d: Elem) => {
-    return [a, b, c, d] as Tuple;
-};
-
 export const tget = (tuple: Tuple, offset: number): Elem => {
     return tuple[offset];
 };

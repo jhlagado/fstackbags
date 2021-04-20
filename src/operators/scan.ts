@@ -2,7 +2,7 @@ import { ARGS, Mode, SINK, VARS } from '../utils/constants';
 import { Closure, Tuple } from '../utils/types';
 import { lookup } from '../utils/registry';
 import { argsFactory, sinkFactory, execClosure, closureFactorySink } from '../utils/closure-utils';
-import { tgetv, tupleNew, tset, tget } from '../utils/tuple-utils';
+import { tgetv, tset, tget } from '../utils/tuple-utils';
 
 const REDUCER = 0;
 const SEED = 1;
@@ -13,7 +13,7 @@ const scanTB = (state: Tuple) => (mode: Mode, d: any) => {
     const args = state[ARGS] as Tuple;
     let vars = state[VARS] as Tuple;
     if (!vars) {
-        vars = tupleNew(tgetv(args, SEED), 0, 0, 0);
+        vars = [tgetv(args, SEED), 0, 0, 0];
         tset(state, VARS, vars);
     }
     const sink = state[SINK] as Closure;
