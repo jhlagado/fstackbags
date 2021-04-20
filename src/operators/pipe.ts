@@ -1,11 +1,11 @@
-import { Tuple, CSProc } from "../utils/types";
+import { CSProc, Closure } from "../utils/types";
 
-export const pipe = (source: Tuple, ...sinks: Tuple[]) => {
-    let res: Tuple | void = source;
+export const pipe = (source: Closure, ...sinks: Closure[]) => {
+    let res: Closure | void = source;
     for (let i = 0, n = sinks.length; i < n; i++) {
         const closure = sinks[i];
-        const proc = closure.proc as CSProc;
-        res = res ? (proc(closure))(res) : res;
+        const proc = closure[1] as CSProc;
+        res = res ? (proc(closure[0]))(res) : res;
     }
     return res;
 }

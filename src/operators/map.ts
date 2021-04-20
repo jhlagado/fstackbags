@@ -1,11 +1,11 @@
 import { ARGS, Mode, SINK } from '../utils/constants';
-import { Tuple } from '../utils/types';
+import { Closure, Tuple } from '../utils/types';
 import { lookup } from '../utils/registry';
 import { argsFactory, sinkFactory, execClosure, closureFactorySink } from '../utils/closure-utils';
 
 const mapTB = (state: Tuple) => (mode: Mode, d: any) => {
     const mapper = lookup(state[ARGS] as number) as Function;
-    const sink = state[SINK] as Tuple;
+    const sink = state[SINK] as Closure;
     execClosure(sink, mode, mode === Mode.data ? mapper(d) : d);
 };
 

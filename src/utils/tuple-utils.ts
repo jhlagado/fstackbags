@@ -20,9 +20,3 @@ export const tset = (tuple: Tuple, offset: number, elem: Elem) => {
     tuple[offset] = elem;
 };
 
-export const tupleClone = (tuple: Tuple): Tuple => {
-    const tuple1 = tupleNew(tuple[0], tuple[1], tuple[2], tuple[3]);
-    tuple1.proc = tuple.proc;
-    return tuple1;
-};
-
