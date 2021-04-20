@@ -23,13 +23,12 @@ const talkback = (state: Tuple) => (mode: Mode) => {
 
 const sf = (state: CTuple) => (mode: Mode, sink: any) => {
     if (mode !== Mode.start) return;
-    const vars = [0, 0, 0, 0];
     const period = (state[ARGS] as Tuple)[0] as number;
-    const instance: CTuple = [...state];
-    instance[VARS] = vars;
-    instance[SINK] = sink;
-    vars[ID] = register(setInterval(callback(instance), period));
-    const tb = createClosure([...instance], talkback);
+    const ctuple: CTuple = [...state];
+    const vars = [0, 0, register(setInterval(callback(ctuple), period)), 0];
+    ctuple[VARS] = vars;
+    ctuple[SINK] = sink;
+    const tb = createClosure(ctuple, talkback);
     execClosure(sink, Mode.start, tb);
 };
 
