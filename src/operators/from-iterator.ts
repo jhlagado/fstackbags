@@ -2,7 +2,6 @@ import { ARGS, FALSE, Mode, SINK, TRUE, VARS } from '../utils/constants';
 import { Closure, Tuple } from '../utils/types';
 import { lookup } from '../utils/registry';
 import { argsFactory, execClosure, closureFactorySource } from '../utils/closure-utils';
-import { tget, tset } from '../utils/tuple-utils';
 
 const INLOOP = 0;
 const GOT1 = 1;
@@ -12,36 +11,36 @@ const DONE = 3;
 const loop = (state: Tuple) => {
     const iterator = lookup(state[ARGS] as number) as any;
     const vars = state[VARS] as Tuple;
-    tset(vars, INLOOP, TRUE);
-    while (tget(vars, GOT1) && !tget(vars, COMPLETED)) {
-        tset(vars, GOT1, FALSE);
+    vars[INLOOP] = TRUE;
+    while (vars[GOT1] && !vars[COMPLETED]) {
+        vars[GOT1] = FALSE;
         const res = iterator.next();
         const sink = state[SINK] as Closure;
         if (res.done) {
-            tset(vars, DONE, TRUE);
+            vars[DONE] = TRUE;
             execClosure(sink, Mode.stop);
             break;
         } else {
             execClosure(sink, Mode.data, res.value);
         }
     }
-    tset(vars, INLOOP, FALSE);
+    vars[INLOOP] = FALSE;
 };
 
 const fromIteratorSinkCB = (state: Tuple) => (mode: Mode) => {
     let vars = state[VARS] as Tuple;
     if (!vars) {
         vars = [FALSE, FALSE, FALSE, FALSE];
-        tset(state, VARS, vars);
+        state[VARS] = vars;
     }
-    if (tget(vars, COMPLETED)) return;
+    if (vars[COMPLETED]) return;
     switch (mode) {
         case Mode.data:
-            tset(vars, GOT1, TRUE);
-            if (!tget(vars, INLOOP) && !tget(vars, DONE)) loop(state);
+            vars[GOT1] = TRUE;
+            if (!vars[INLOOP] && !vars[DONE]) loop(state);
             break;
         case Mode.stop:
-            tset(vars, COMPLETED, TRUE);
+            vars[COMPLETED] = TRUE;
             break;
     }
 };
