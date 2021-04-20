@@ -1,6 +1,6 @@
 import { CProc, CSProc, Tuple, Elem } from './types';
-import { ARGS, SOURCE, Mode, VARS, SINK } from './constants';
-import { tupleClone, tupleNew, tset } from './tuple-utils';
+import { ARGS, SOURCE, Mode, VARS } from './constants';
+import { tupleClone, tupleNew } from './tuple-utils';
 
 export const isTuple = (elem?: Elem): elem is Tuple => Array.isArray(elem) && elem.length === 4;
 
@@ -46,38 +46,24 @@ export const sinkFactoryTerminal = (cproc: CProc): CSProc => {
     return sinkFactoryProc;
 };
 
-export const getInstance = (state: Tuple, sink: Tuple) => {
-    const instance = [0, 0, 0, 0] as Tuple;
-    tset(instance, ARGS, state[ARGS] as Tuple);
-    tset(instance, VARS, state[VARS] as Tuple);
-    tset(instance, SOURCE, state[SOURCE] as Tuple);
-    tset(instance, SINK, sink);
-    return instance;
-};
-
-export const getTB = (instance: Tuple, cproc: CProc) => {
-    const tb = tupleClone(instance);
+export const getTB = (state: Tuple, sink: Tuple, cproc: CProc) => {
+    const instance = [state[ARGS], state[VARS], state[SOURCE], sink];
+    const tb = tupleClone(instance as Tuple);
     tb.proc = cproc;
     return tb;
 };
 
-type CFF = (tb: Tuple, sink: Tuple) => void;
-export const closureFactory = (f: CFF) => (cproc: CProc): CProc => (state: Tuple) => (mode: Mode, sink: Tuple) => {
+export const closureFactorySource = (cproc: CProc): CProc => (state: Tuple) => (mode: Mode, sink: Tuple) => {
     if (mode !== Mode.start) return;
-    const instance = getInstance(state, sink);
-    const tb = getTB(instance, cproc);
-    f(tb, sink);
+    const tb = getTB(state, sink, cproc);
+    execClosure(sink, Mode.start, tb);
     return tb;
 };
 
-export const fSource = (tb: Tuple, sink: Tuple): void => {
-    execClosure(sink, Mode.start, tb);
-};
-
-export const fSink = (tb: Tuple, _sink: Tuple): void => {
+export const closureFactorySink = (cproc: CProc): CProc => (state: Tuple) => (mode: Mode, sink: Tuple) => {
+    if (mode !== Mode.start) return;
+    const tb = getTB(state, sink, cproc);
     const source = tb[SOURCE] as Tuple;
     execClosure(source, Mode.start, tb);
+    return tb;
 };
-
-export const closureFactorySource = closureFactory(fSource);
-export const closureFactorySink = closureFactory(fSink);
