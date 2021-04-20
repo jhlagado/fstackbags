@@ -25,7 +25,7 @@ const talkback = (state: Tuple) => (mode: Mode) => {
 const sf = (state: Tuple) => (mode: Mode, sink: any) => {
     if (mode !== Mode.start) return;
     const period = tgetv(state[ARGS] as Tuple, 0);
-    const instance: Tuple = tupleClone(state, false);
+    const instance: Tuple = tupleClone(state);
     tset(instance, SINK, sink);
     const vars = tupleNew(0, 0, 0, 0);
     tset(instance, VARS, vars);

@@ -61,23 +61,20 @@ export const getTB = (instance: Tuple, cproc: CProc) => {
     return tb;
 };
 
-type CFF = (instance: Tuple, tb: Tuple, sink: Tuple) => void;
-export const closureFactory = (f: CFF) => (cproc: CProc): CProc => {
-    const closureFactoryProc = (state: Tuple) => (mode: Mode, sink: Tuple) => {
-        if (mode !== Mode.start) return;
-        const instance = getInstance(state, sink);
-        const tb = getTB(instance, cproc);
-        f(instance, tb, sink);
-        return tb;
-    };
-    return closureFactoryProc;
+type CFF = (tb: Tuple, sink: Tuple) => void;
+export const closureFactory = (f: CFF) => (cproc: CProc): CProc => (state: Tuple) => (mode: Mode, sink: Tuple) => {
+    if (mode !== Mode.start) return;
+    const instance = getInstance(state, sink);
+    const tb = getTB(instance, cproc);
+    f(tb, sink);
+    return tb;
 };
 
-export const fSource = (instance: Tuple, tb: Tuple, sink: Tuple): void => {
+export const fSource = (tb: Tuple, sink: Tuple): void => {
     execClosure(sink, Mode.start, tb);
 };
 
-export const fSink = (instance: Tuple, tb: Tuple, _sink: Tuple): void => {
+export const fSink = (tb: Tuple, _sink: Tuple): void => {
     const source = tb[SOURCE] as Tuple;
     execClosure(source, Mode.start, tb);
 };
