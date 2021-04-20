@@ -2,7 +2,7 @@ import { ARGS, FALSE, Mode, SINK, TRUE, VARS } from '../utils/constants';
 import { Closure, Tuple } from '../utils/types';
 import { lookup } from '../utils/registry';
 import { argsFactory, execClosure, closureFactorySource } from '../utils/closure-utils';
-import { tgetv, tset, tsetv } from '../utils/tuple-utils';
+import { tget, tset } from '../utils/tuple-utils';
 
 const INLOOP = 0;
 const GOT1 = 1;
@@ -12,20 +12,20 @@ const DONE = 3;
 const loop = (state: Tuple) => {
     const iterator = lookup(state[ARGS] as number) as any;
     const vars = state[VARS] as Tuple;
-    tsetv(vars, INLOOP, TRUE);
-    while (tgetv(vars, GOT1) && !tgetv(vars, COMPLETED)) {
-        tsetv(vars, GOT1, FALSE);
+    tset(vars, INLOOP, TRUE);
+    while (tget(vars, GOT1) && !tget(vars, COMPLETED)) {
+        tset(vars, GOT1, FALSE);
         const res = iterator.next();
         const sink = state[SINK] as Closure;
         if (res.done) {
-            tsetv(vars, DONE, TRUE);
+            tset(vars, DONE, TRUE);
             execClosure(sink, Mode.stop);
             break;
         } else {
             execClosure(sink, Mode.data, res.value);
         }
     }
-    tsetv(vars, INLOOP, FALSE);
+    tset(vars, INLOOP, FALSE);
 };
 
 const fromIteratorSinkCB = (state: Tuple) => (mode: Mode) => {
@@ -34,14 +34,14 @@ const fromIteratorSinkCB = (state: Tuple) => (mode: Mode) => {
         vars = [FALSE, FALSE, FALSE, FALSE];
         tset(state, VARS, vars);
     }
-    if (tgetv(vars, COMPLETED)) return;
+    if (tget(vars, COMPLETED)) return;
     switch (mode) {
         case Mode.data:
-            tsetv(vars, GOT1, TRUE);
-            if (!tgetv(vars, INLOOP) && !tgetv(vars, DONE)) loop(state);
+            tset(vars, GOT1, TRUE);
+            if (!tget(vars, INLOOP) && !tget(vars, DONE)) loop(state);
             break;
         case Mode.stop:
-            tsetv(vars, COMPLETED, TRUE);
+            tset(vars, COMPLETED, TRUE);
             break;
     }
 };
