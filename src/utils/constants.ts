@@ -3,6 +3,7 @@ export const VARS = 1;
 export const SOURCE = 2;
 export const SINK = 3;
 
+export const NIL = 0;
 export const FALSE = 0;
 export const TRUE = -1;
 
