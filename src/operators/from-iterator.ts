@@ -1,5 +1,5 @@
 import { ARGS, FALSE, Mode, SINK, TRUE, VARS } from '../utils/constants';
-import { Tuple } from '../utils/types';
+import { Closure, Tuple } from '../utils/types';
 import { lookup } from '../utils/registry';
 import { argsFactory, execClosure, closureFactorySource } from '../utils/closure-utils';
 import { tgetv, tset, tsetv, tupleNew } from '../utils/tuple-utils';
@@ -16,7 +16,7 @@ const loop = (state: Tuple) => {
     while (tgetv(vars, GOT1) && !tgetv(vars, COMPLETED)) {
         tsetv(vars, GOT1, FALSE);
         const res = iterator.next();
-        const sink = state[SINK] as Tuple;
+        const sink = state[SINK] as Closure;
         if (res.done) {
             tsetv(vars, DONE, TRUE);
             execClosure(sink, Mode.stop);

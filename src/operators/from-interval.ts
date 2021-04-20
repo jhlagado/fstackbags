@@ -25,9 +25,9 @@ const talkback = (state: Tuple) => (mode: Mode) => {
 const sf = (state: Tuple) => (mode: Mode, sink: any) => {
     if (mode !== Mode.start) return;
     const period = tgetv(state[ARGS] as Tuple, 0);
-    const instance: Tuple = tupleNew(...state);
+    const instance: Tuple = [...state];
     tset(instance, SINK, sink);
-    const vars = tupleNew(0, 0, 0, 0);
+    const vars: Tuple = [0, 0, 0, 0];
     tset(instance, VARS, vars);
     tsetv(vars, ID, register(setInterval(callback(instance), period)));
     const tb = createClosure(state[0], vars, state[2], sink, talkback);
