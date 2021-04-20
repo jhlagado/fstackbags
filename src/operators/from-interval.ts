@@ -1,5 +1,5 @@
-import { ARGS, Mode, SINK, VARS } from '../utils/constants';
-import { Closure, Tuple } from '../utils/types';
+import { ARGS, Mode, SINK, SOURCE, VARS } from '../utils/constants';
+import { Closure, CTuple, Tuple } from '../utils/types';
 import { lookup, register } from '../utils/registry';
 import { createClosure, argsFactory, execClosure } from '../utils/closure-utils';
 
@@ -21,15 +21,15 @@ const talkback = (state: Tuple) => (mode: Mode) => {
     }
 };
 
-const sf = (state: Tuple) => (mode: Mode, sink: any) => {
+const sf = (state: CTuple) => (mode: Mode, sink: any) => {
     if (mode !== Mode.start) return;
+    const vars = [0, 0, 0, 0];
     const period = (state[ARGS] as Tuple)[0] as number;
-    const instance: Tuple = [...state];
-    instance[SINK] = sink;
-    const vars: Tuple = [0, 0, 0, 0];
+    const instance: CTuple = [...state];
     instance[VARS] = vars;
+    instance[SINK] = sink;
     vars[ID] = register(setInterval(callback(instance), period));
-    const tb = createClosure(state[0], vars, state[2], sink, talkback);
+    const tb = createClosure([...instance], talkback);
     execClosure(sink, Mode.start, tb);
 };
 

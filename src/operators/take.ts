@@ -28,7 +28,7 @@ const sourceTBF: CProc = (state) => (mode, d) => {
     switch (mode) {
         case Mode.start:
             state[SOURCE] = d;
-            execClosure(sink, Mode.start, createClosure(state[0], state[1], state[2], state[3], tbf));
+            execClosure(sink, Mode.start, createClosure([...state], tbf));
             break;
         case Mode.data:
             const taken = vars[TAKEN] as number;
