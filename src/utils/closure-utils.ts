@@ -4,7 +4,7 @@ import { ARGS, SOURCE, Mode, VARS } from './constants';
 export const createClosure = (ctuple: CTuple, cproc: CProc | CSProc): Closure => [ctuple, cproc] as Closure;
 
 export const execClosure = (closure: Closure, mode: Mode, d?: any) => {
-    const tuple: CTuple = closure[0];
+    const tuple = closure[0];
     const proc = closure[1] as CProc;
     const result = proc(tuple)(mode, d);
     return result;
@@ -24,10 +24,8 @@ export const getArgs = (args: Elem[]) => {
 export const argsFactory = (cproc: CProc | CSProc) => (...args: Elem[]) =>
     createClosure([getArgs(args), 0, 0, 0] as CTuple, cproc);
 
-export const sinkFactory = (cproc: CProc): CSProc => (state: Tuple) => (source: Closure) => {
-    const tb = createClosure([state[ARGS], 0, source, 0] as CTuple, cproc);
-    return tb;
-};
+export const sinkFactory = (cproc: CProc): CSProc => (state: Tuple) => (source: Closure) =>
+    createClosure([state[ARGS], 0, source, 0] as CTuple, cproc);
 
 export const sinkFactoryTerminal = (cproc: CProc): CSProc => (state: Tuple) => (source: Closure) => {
     const tb = createClosure([state[ARGS], 0, source, 0] as CTuple, cproc);

@@ -1,4 +1,4 @@
-import { ARGS, Mode, SINK, SOURCE, VARS } from '../utils/constants';
+import { ARGS, Mode, SINK, VARS } from '../utils/constants';
 import { Closure, CTuple, Tuple } from '../utils/types';
 import { lookup, register } from '../utils/registry';
 import { createClosure, argsFactory, execClosure } from '../utils/closure-utils';
