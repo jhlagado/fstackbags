@@ -10,6 +10,7 @@ export const createClosure = (
 ): Closure => ({ args, vars, source, sink, proc });
 
 export const execClosure = (closure: Closure, mode: Mode, d?: any) => (closure.proc as CProc)(closure)(mode, d);
+export const execClosureFactory = (closure: Closure, source: Closure) => (closure.proc as CSProc)(closure)(source);
 
 export const getArgs = (args: Elem[]) => {
     switch (args.length) {
