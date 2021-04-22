@@ -1,4 +1,4 @@
-import { ARGS, Mode, SINK, SOURCE, TRUE, VARS } from '../utils/constants';
+import { Mode, TRUE } from '../utils/constants';
 import { Closure, CProc, Tuple } from '../utils/types';
 import { createClosure, sinkFactory, argsFactory, execClosure, closureFactorySink } from '../utils/closure-utils';
 
@@ -6,29 +6,28 @@ const TAKEN = 1;
 const END = 2;
 
 const tbf: CProc = (state) => (mode, d) => {
-    const max = state[ARGS] as number;
-    const vars = state[VARS] as Tuple;
-    const source = state[SOURCE] as Closure;
+    const max = state.args as number;
+    const vars = state.vars as Tuple;
+    const source = state.source as Closure;
     if (mode === Mode.stop) {
         vars[END] = TRUE;
         execClosure(source, mode, d);
-    } else if (vars[TAKEN] < max) {
+    } else if ((vars[TAKEN] as number) < max) {
         execClosure(source, mode, d);
     }
 };
 
 const sourceTBF: CProc = (state) => (mode, d) => {
-    const max = state[ARGS] as number;
-    let vars = state[VARS] as Tuple;
+    const max = state.args as number;
+    let vars = state.vars as Tuple;
     if (!vars) {
         vars = [0, 0, 0, 0];
-        state[VARS] = vars;
+        state.vars = vars;
     }
-    const sink = state[SINK] as Closure;
+    const sink = state.sink as Closure;
     switch (mode) {
         case Mode.start:
-            state[SOURCE] = d;
-            execClosure(sink, Mode.start, createClosure([...state], tbf));
+            execClosure(sink, Mode.start, createClosure(max, vars, d, sink, tbf));
             break;
         case Mode.data:
             const taken = vars[TAKEN] as number;
@@ -38,12 +37,11 @@ const sourceTBF: CProc = (state) => (mode, d) => {
                 execClosure(sink, Mode.stop);
                 if (vars[TAKEN] === max && !vars[END]) {
                     vars[END] = TRUE;
-                    const source = state[SOURCE] as Closure;
+                    const source = state.source as Closure;
                     if (source) execClosure(source, Mode.stop);
                     execClosure(sink, Mode.stop);
                 }
             }
-
             break;
         case Mode.stop:
             execClosure(sink, Mode.stop, d);

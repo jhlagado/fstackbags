@@ -1,4 +1,4 @@
-import { ARGS, Mode, SINK, VARS } from '../utils/constants';
+import { Mode } from '../utils/constants';
 import { Closure, Tuple } from '../utils/types';
 import { lookup } from '../utils/registry';
 import { argsFactory, sinkFactory, execClosure, closureFactorySink } from '../utils/closure-utils';
@@ -8,14 +8,14 @@ const SEED = 1;
 
 const ACC = 1;
 
-const scanTB = (state: Tuple) => (mode: Mode, d: any) => {
-    const args = state[ARGS] as Tuple;
-    let vars = state[VARS] as Tuple;
+const scanTB = (state: Closure) => (mode: Mode, d: any) => {
+    const args = state.args as Tuple;
+    let vars = state.vars as Tuple;
     if (!vars) {
         vars = [args[SEED], 0, 0, 0];
-        state[VARS] = vars;
+        state.vars = vars;
     }
-    const sink = state[SINK] as Closure;
+    const sink = state.sink as Closure;
     if (mode === Mode.data) {
         vars[ACC] = lookup(args[REDUCER] as number)(vars[ACC], d);
         execClosure(sink, Mode.data, vars[ACC]);

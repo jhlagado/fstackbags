@@ -1,14 +1,15 @@
-import { CProc, CSProc, Tuple, Elem, Closure, CTuple } from './types';
-import { ARGS, SOURCE, Mode, VARS } from './constants';
+import { CProc, CSProc, Elem, Closure } from './types';
+import { Mode } from './constants';
 
-export const createClosure = (ctuple: CTuple, cproc: CProc | CSProc): Closure => [ctuple, cproc] as Closure;
+export const createClosure = (
+    args: Elem,
+    vars: Elem,
+    source: Closure | null,
+    sink: Closure | null,
+    proc: CProc | CSProc,
+): Closure => ({ args, vars, source, sink, proc });
 
-export const execClosure = (closure: Closure, mode: Mode, d?: any) => {
-    const tuple = closure[0];
-    const proc = closure[1] as CProc;
-    const result = proc(tuple)(mode, d);
-    return result;
-};
+export const execClosure = (closure: Closure, mode: Mode, d?: any) => (closure.proc as CProc)(closure)(mode, d);
 
 export const getArgs = (args: Elem[]) => {
     switch (args.length) {
@@ -21,29 +22,34 @@ export const getArgs = (args: Elem[]) => {
     }
 };
 
-export const argsFactory = (cproc: CProc | CSProc) => (...args: Elem[]) =>
-    createClosure([getArgs(args), 0, 0, 0] as CTuple, cproc);
+export const argsFactory = (cproc: CProc | CSProc) => (...argList: Elem[]) =>
+    createClosure(getArgs(argList), 0, null, null, cproc);
 
-export const sinkFactory = (cproc: CProc): CSProc => (state: Tuple) => (source: Closure) =>
-    createClosure([state[ARGS], 0, source, 0] as CTuple, cproc);
+export const sinkFactory = (cproc: CProc): CSProc => ({ args }: Closure) => (source: Closure) =>
+    createClosure(args, 0, source, null, cproc);
 
-export const sinkFactoryTerminal = (cproc: CProc): CSProc => (state: Tuple) => (source: Closure) => {
-    const tb = createClosure([state[ARGS], 0, source, 0] as CTuple, cproc);
+export const sinkFactoryTerminal = (cproc: CProc): CSProc => ({ args }: Closure) => (source: Closure) => {
+    const tb = createClosure(args, 0, source, null, cproc);
     execClosure(source, Mode.start, tb);
     return tb;
 };
 
-export const closureFactorySource = (cproc: CProc): CProc => (state: Tuple) => (mode: Mode, sink: Closure) => {
+export const closureFactorySource = (cproc: CProc): CProc => ({ args, vars, source }: Closure) => (
+    mode: Mode,
+    sink: Closure,
+) => {
     if (mode !== Mode.start) return;
-    const tb = createClosure([state[ARGS], state[VARS], state[SOURCE], sink] as CTuple, cproc);
+    const tb = createClosure(args, vars, source, sink, cproc);
     execClosure(sink, Mode.start, tb);
     return tb;
 };
 
-export const closureFactorySink = (cproc: CProc): CProc => (state: Tuple) => (mode: Mode, sink: Closure) => {
+export const closureFactorySink = (cproc: CProc): CProc => ({ args, vars, source }: Closure) => (
+    mode: Mode,
+    sink: Closure,
+) => {
     if (mode !== Mode.start) return;
-    const source = state[SOURCE] as Closure;
-    const tb = createClosure([state[ARGS], state[VARS], source, sink] as CTuple, cproc);
-    execClosure(source, Mode.start, tb);
+    const tb = createClosure(args, vars, source, sink, cproc);
+    execClosure(source as Closure, Mode.start, tb);
     return tb;
 };

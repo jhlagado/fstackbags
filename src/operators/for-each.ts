@@ -1,18 +1,18 @@
-import { ARGS, Mode, SOURCE } from '../utils/constants';
-import { Closure, Tuple } from '../utils/types';
+import { Mode } from '../utils/constants';
+import { Closure } from '../utils/types';
 import { lookup } from '../utils/registry';
 import { argsFactory, execClosure, sinkFactoryTerminal } from '../utils/closure-utils';
 
-const forEachTB = (state: Tuple) => (mode: Mode, d: any) => {
-    const effect = lookup(state[ARGS] as number) as Function;
+const forEachTB = (state: Closure) => (mode: Mode, d: any) => {
+    const effect = lookup(state.args as number) as Function;
     switch (mode) {
         case Mode.start:
-            state[SOURCE] = d;
+            state.source = d;
             execClosure(d, Mode.data);
             break;
         case Mode.data:
             effect(d);
-            const source = state[SOURCE] as Closure;
+            const source = state.source as Closure;
             execClosure(source, Mode.data);
             break;
     }

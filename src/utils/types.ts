@@ -1,6 +1,6 @@
 import { Mode, NIL } from './constants';
 
-export type Elem = number | Tuple | Closure;
+export type Elem = null | number | Tuple | Closure;
 export type Tuple = Elem[];
 export type CTuple = [
     Tuple | number | typeof NIL,
@@ -8,11 +8,17 @@ export type CTuple = [
     Closure | typeof NIL,
     Closure | typeof NIL,
 ];
-export type Closure = [CTuple, CProc | CSProc];
+export interface Closure {
+    args: Elem;
+    vars: Elem;
+    source: Closure | null;
+    sink: Closure | null;
+    proc: CProc | CSProc;
+}
 
 export type Proc = (mode: Mode, d?: any) => Closure | void;
-export type CProc = (state: CTuple) => Proc;
-export type CSProc = (state: CTuple) => (source: Closure) => Closure;
+export type CProc = (state: Closure) => Proc;
+export type CSProc = (state: Closure) => (source: Closure) => Closure;
 
 export type Effect = (value: string) => void;
 export type Mapper = (value: any) => any;

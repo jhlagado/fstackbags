@@ -1,13 +1,13 @@
-import { ARGS, Mode, SINK, VARS } from '../utils/constants';
-import { Closure, Tuple } from '../utils/types';
+import { Mode } from '../utils/constants';
+import { Closure } from '../utils/types';
 import { argsFactory, closureFactorySource, execClosure } from '../utils/closure-utils';
 
-const fromOnceTB = (state: Tuple) => (mode: Mode, _d: any) => {
-    const constant = state[ARGS] as number;
-    const sink = state[SINK] as Closure;
-    let taken = state[VARS] as number;
+const fromOnceTB = (state: Closure) => (mode: Mode, _d: any) => {
+    const constant = state.args as number;
+    const sink = state.sink as Closure;
+    let taken = state.vars as number;
     if (mode === Mode.data && taken < 1) {
-        state[VARS] = taken + 1;
+        state.vars = taken + 1;
         execClosure(sink, Mode.data, constant);
     }
     execClosure(sink, Mode.stop);
